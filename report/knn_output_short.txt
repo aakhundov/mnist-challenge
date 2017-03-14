@@ -1,0 +1,14 @@
+..>python knn.py -metrics cosine -ks 3 -evaluate 1
+K-Nearest Neighbors
+
+Reading data...
+60000 training data read
+10000 testing data read
+
+(Metric, K)              [Cross Validation Fold Errors]                    Avg. Error
+-----------------------------------------------------------------------------------------
+('cosine', 3)            [1.7, 1.53, 1.55, 1.47, 2.16, 1.51]               1.653
+-----------------------------------------------------------------------------------------
+Best Params: ('cosine', 3), validation error: 1.653
+
+Testing Set Error: 1.660

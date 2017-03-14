@@ -1,0 +1,15 @@
+the ML1 mnist challenge
+ 
+To keep you busy during the upcoming boring holiday season, here's something useful: an MNIST challenge.
+ 
+The rules are as follows.
+ 
+- implement kNN, NN (or CNN, RNN, ...), logreg, and GPs from scratch in Anaconda Python 2.7. No ensemble learning.  From scratch means: you can use numpy and such basic tools, but not sklearn or similar. Basically, we ask you to implement the models yourself.  (Yes, you can use the models posted by the teachers in the lecture.)
+
+- tune your implementation, potential pre-processing and hyperparameters to classify MNIST, which you can download from http://yann.lecun.com/exdb/mnist/
+
+- write a short, 1-page report about your results, and report your classification error on the test set (make sure you do not touch the test set during training). The report must contain your names and imats.
+
+- upload the report, the classification errors for each method, and a zip file containing your implementations (which must run in Anaconda Python 2.7), by Feb. 6, 11:59am.  Do not upload the data set. The upload page will be made available in January.
+ 
+The winner will be selected as that team having the lowest average error score over all methods.  Your submission can only win if we can reproduce your result with your software on our computers---including the training process.

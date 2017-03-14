@@ -1,0 +1,15 @@
+..>python gp.py -ntrain 40000
+Gaussian Processes
+
+Reading data...
+40000 training data read
+10000 testing data read
+
+K matrix computed
+K*^T matrix computed
+K matrix inverted
+K*^T times K^-1 matrix computed
+10 binary classifications made
+Class labels detected
+
+Testing Set Error: 1.040
