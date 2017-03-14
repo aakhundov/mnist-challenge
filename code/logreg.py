@@ -1,9 +1,8 @@
 import sys
 
 import numpy as np
-import scipy.stats as st
 
-import data
+from code import data
 
 
 # softmax function computed for an array of 

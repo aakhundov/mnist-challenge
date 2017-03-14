@@ -1,10 +1,10 @@
 import sys
 
 import numpy as np
-import scipy.stats as st
 import scipy.spatial.distance as sp
+import scipy.stats as st
 
-import data
+from code import data
 
 
 # computing the matrix of pairwise distances between all vector elements

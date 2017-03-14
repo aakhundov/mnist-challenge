@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import scipy.spatial.distance as sp
 
-import data
+from code import data
 
 
 # computing covariance matrix for GP by means of SE kernel:

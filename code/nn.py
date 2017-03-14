@@ -1,9 +1,8 @@
 import sys
 
 import numpy as np
-import scipy.stats as st
 
-import data
+from code import data
 
 
 # either sigmoid function or its derivative, depending on "deriv",
