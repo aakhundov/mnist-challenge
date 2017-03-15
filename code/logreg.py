@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 
-from code import data
+import data
 
 
 # softmax function computed for an array of 
@@ -10,7 +10,7 @@ from code import data
 def softmax(X):
     exped = np.nan_to_num(np.exp(X))
     summed = np.sum(exped, axis=1)
-    return exped / summed[:,np.newaxis]
+    return exped / summed[:, np.newaxis]
 
 
 # classifying the data "X"/"T" using the weights "W"
@@ -21,12 +21,14 @@ def get_error_score(X, W, T):
     incorrect = np.sum(classified != T)
     return incorrect * 100.0 / len(X)
 
+
 # cross-entropy loss function, with L2-regularization
 def get_loss(X, W, T, regularization):
     sm = softmax(np.dot(X, W))
-    logs = np.nan_to_num(np.log(sm[np.arange(len(X)),T]))
+    logs = np.nan_to_num(np.log(sm[np.arange(len(X)), T]))
     regs = 0.5 * regularization * np.sum(W * W)
     return -1.0 / len(X) * np.sum(logs) + regs
+
 
 # gradient of the loss function with respect 
 # to the weights "W", with L2-regularization
@@ -53,7 +55,6 @@ def train_logreg(X, T, epochs, batch_size, learning_rate, regularization, datase
     weights = []
     training_losses, training_errors = [], []
     validation_losses, validation_errors = [], []
-
 
     # storing the initial values of
     # weights, errors, and losses
@@ -83,8 +84,8 @@ def train_logreg(X, T, epochs, batch_size, learning_rate, regularization, datase
         # the gradient and updating the weights "W" (subtracting
         # gradient) after scaling the gradient by the "learning_rate"
         for b in range(0, X_training.shape[0] / batch_size):
-            X_batch = X_training[b * batch_size : (b+1) * batch_size]
-            T_batch = T_training[b * batch_size : (b+1) * batch_size]
+            X_batch = X_training[b * batch_size:(b+1) * batch_size]
+            T_batch = T_training[b * batch_size:(b+1) * batch_size]
             W -= learning_rate * get_gradient(X_batch, W, T_batch, regularization)
 
         # storing the weights, errors, and 
@@ -110,12 +111,13 @@ def train_logreg(X, T, epochs, batch_size, learning_rate, regularization, datase
     if verbose:
         print "------------------------------------------------------"
         print "Best Epoch: {0}".format(best_epoch)
-        print "Training Loss: {0:.3f}, Training Error: {1:.2f}".format(training_losses[best_epoch], training_errors[best_epoch])
-        print "Validation Loss: {0:.3f}, Validation Error: {1:.2f}".format(validation_losses[best_epoch], validation_errors[best_epoch])
+        print "Training Loss: {0:.3f}, Training Error: {1:.2f}".format(
+            training_losses[best_epoch], training_errors[best_epoch])
+        print "Validation Loss: {0:.3f}, Validation Error: {1:.2f}".format(
+            validation_losses[best_epoch], validation_errors[best_epoch])
         print
 
-    return (best_weights, best_epoch, training_losses, training_errors, validation_losses, validation_errors)
-
+    return best_weights, best_epoch, training_losses, training_errors, validation_losses, validation_errors
 
 
 if __name__ == "__main__":
@@ -134,7 +136,6 @@ if __name__ == "__main__":
     batch_sizes = [50, 100, 200]                    # different mini-batch sizes tried
     learning_rates = [0.02, 0.05, 0.1, 0.5, 1.0]    # different learning rates tried
     regularizations = [0.0, 0.0001, 0.0005]         # different regularization parameters tried
-
 
     # processing command-line arguments
 
@@ -167,9 +168,7 @@ if __name__ == "__main__":
             print sys.argv[0], ": invalid option", option
             sys.exit(1)
 
-
     np.seterr(over="ignore", divide="ignore")
-
 
     print "Logistic Regression"
     print
@@ -181,7 +180,6 @@ if __name__ == "__main__":
     print "{0} training data read".format(len(X_train))
     print "{0} testing data read".format(len(X_test))
     print
-
 
     weights, errors, params = [], [], []
 
@@ -203,7 +201,7 @@ if __name__ == "__main__":
                     dataset_split, verbose=verbose
                 )
 
-                # storing the weihgts and the corresponding validation
+                # storing the weights and the corresponding validation
                 # error resulting from the above training, together with
                 # the values of the hyperparameters tried
                 weights.append(W_best)
@@ -228,11 +226,9 @@ if __name__ == "__main__":
     print "Best Params: {0}, validation error: {1:.3f}".format(P_selected, np.min(errors))
     print
 
-
     if evaluate:
         # evaluating the model performance on the testing set
         print "Testing Set Error: {0:.3f}".format(
             get_error_score(X_test, W_selected, T_test)
         )
         print
-

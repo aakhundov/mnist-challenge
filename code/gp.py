@@ -3,7 +3,7 @@ import sys
 import numpy as np
 import scipy.spatial.distance as sp
 
-from code import data
+import data
 
 
 # computing covariance matrix for GP by means of SE kernel:
@@ -11,7 +11,7 @@ from code import data
 # scipy.spatial.distance.pdist and .cdist are used to compute
 # the matrix of squared Euclidian distances efficiently.
 # "lsquared" is an argument, sigmaF is assumed to be 1.
-def compute_SE_kernel_matrix(Xs, Ys, lsquared):
+def compute_se_kernel_matrix(Xs, Ys, lsquared):
     if Xs is Ys:
         dist = sp.squareform(sp.pdist(Xs, "sqeuclidean"))
     else:
@@ -26,11 +26,11 @@ def compute_SE_kernel_matrix(Xs, Ys, lsquared):
 # only mean, and not variance, is of practical importance here.
 def gaussian_process(X, T, X_s, lsquared):
     # computing the K matrix for the observed data
-    K = compute_SE_kernel_matrix(X, X, lsquared)
+    K = compute_se_kernel_matrix(X, X, lsquared)
     print "K matrix computed"
 
     # computing the K* transposed matrix
-    K_s_T = compute_SE_kernel_matrix(X_s, X, lsquared)
+    K_s_T = compute_se_kernel_matrix(X_s, X, lsquared)
     print "K*^T matrix computed"
 
     # inverting the K matrix
@@ -59,7 +59,7 @@ def gaussian_process(X, T, X_s, lsquared):
 
         # storing the predicted k-class vs. 
         # rest means in the data points X*
-        predictions[:,k] = result
+        predictions[:, k] = result
 
     print "{0} binary classifications done".format(classes)
 
@@ -75,9 +75,8 @@ def gaussian_process(X, T, X_s, lsquared):
 # comparing predicted vs. true labels 
 # and returning the corresponding error score
 def get_error_score(T_predicted, T_true):
-    count = np.count_nonzero(T_predicted != T_true)
+    count = np.count_nonzero(np.array(T_predicted != T_true))
     return count * 100.0 / len(T_predicted)
-
 
 
 if __name__ == "__main__":
@@ -91,7 +90,6 @@ if __name__ == "__main__":
     normalize = True    # normalize input vectors or not (by default: yes)
 
     lsquared = 33.0     # l^2 used in SE kernel computation
-
 
     # processing command-line arguments
 
@@ -112,7 +110,6 @@ if __name__ == "__main__":
             print sys.argv[0], ": invalid option", option
             sys.exit(1)
 
-
     print "Gaussian Processes"
     print
 
@@ -124,14 +121,11 @@ if __name__ == "__main__":
     print "{0} testing data read".format(len(X_test))
     print
 
-
     # running a Gaussian process on training and testing sets, with "lsquared"
     T_predicted = gaussian_process(X_train, T_train, X_test, lsquared=lsquared)
-
 
     # evaluating the model performance on the testing set
     print "Testing Set Error: {0:.3f}".format(
         get_error_score(T_predicted, T_test)
     )
     print
-

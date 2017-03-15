@@ -2,7 +2,7 @@ import sys
 
 import numpy as np
 
-from code import data
+import data
 
 
 # either sigmoid function or its derivative, depending on "deriv",
@@ -14,6 +14,7 @@ def sigmoid(X, deriv=False):
     else:
         return X * (1.0 - X)
 
+
 # either hyperbolic tangent function or its derivative, depending on "deriv",
 # computed for an array of input vectors (inputs are rows of matrix "X").
 # if "deriv" is True, "X" is assumed to contain the values of the function
@@ -24,21 +25,23 @@ def tanh(X, deriv=False):
     else:
         return 1.0 - X * X
 
+
 # either rectified linear unit function or its derivative, depending on "deriv".
 # computed for an array of input vectors (inputs are rows of matrix "X").
 # if "deriv" is True, "X" is assumed to contain the values of the function
 def relu(X, deriv=False):
     if not deriv:
-        return np.where(X > 0, X, 0)
+        return np.where(X > 0.0, X, 0.0)
     else:
-        return np.where(X > 0, 1, 0)
+        return np.where(X > 0.0, 1.0, 0.0)
+
 
 # softmax function computed for an array of 
 # input vectors (inputs are rows of matrix "X")
 def softmax(X):
     exped = np.nan_to_num(np.exp(X))
     summed = np.nan_to_num(np.sum(exped, axis=1))
-    return exped / summed[:,np.newaxis]
+    return exped / summed[:, np.newaxis]
 
 
 # comparing predicted vs. true labels and 
@@ -48,10 +51,12 @@ def get_error_score(output, T):
     incorrect = np.sum(classified != T)
     return incorrect * 100.0 / len(T)
 
+
 # cross-entropy loss function
-def get_loss(output, W, T):
+def get_loss(output, T):
     logs = np.nan_to_num(np.log(output[np.arange(len(T)), T]))
     return -1.0 / len(T) * np.sum(logs)
+
 
 # delta (error) of the output (softmax) layer
 # computed from "output" and target ("T") values
@@ -61,7 +66,7 @@ def get_output_delta(output, T):
     return delta
 
 
-# randomly selecting hidden untits for dropping out during a training 
+# randomly selecting hidden units for dropping out during a training
 # iteration ("dropout_rate" share of units from each of the hidden
 # layers is actually dropped out). the set of the weight matrices 
 # "W" is used here solely to figure out the number of units 
@@ -73,14 +78,15 @@ def get_dropped_out_units(W, dropout_rate=0.5):
             drop = np.arange(W[i].shape[1])
             np.random.shuffle(drop)
             drop = drop[:int(len(drop) * (1 - dropout_rate))]
-            drop = drop[:,np.newaxis]
+            drop = drop[:, np.newaxis]
             dropped.append(drop)
         return dropped
     else:
         return None
 
+
 # passing the inputs "X" through the network with weights "W"
-# and computing the coresponding activations of each layer. if 
+# and computing the corresponding activations of each layer. if
 # dropout_rate is non-zero (and so the "dropped_out" list returned 
 # by "get_dropped_out_units" function is not None), the activations 
 # of the dropped out units are explicitly set to zero.
@@ -95,8 +101,9 @@ def forward_pass(X, W, functions, dropout_rate=0.0):
         activations.append(activation)
     return activations
 
-# backpropogation algorithm: first the activations are computed,
-# and then the error (delta) of the output layer is propogated back
+
+# backpropagation algorithm: first the activations are computed,
+# and then the error (delta) of the output layer is propagated back
 # through the layers with concomitant computation of the gradient
 # of the error function with respect to network weights
 def backprop(X, W, T, functions, dropout_rate=0.0):
@@ -112,7 +119,8 @@ def backprop(X, W, T, functions, dropout_rate=0.0):
 # training neural network model based on "X"/"T" data
 # by means of mini-batch stochastic gradient descent.
 # the rest of the argument names seem self-explanatory
-def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate, momentum_rate, dropout_rate, dataset_split, verbose=False):
+def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate,
+             momentum_rate, dropout_rate, dataset_split, verbose=False):
     # splitting the data into training and validation sets
     # according to the value of "dataset_split" argument
     training_set_size = int(dataset_split * len(X))
@@ -140,9 +148,9 @@ def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate, momentu
     # storing the initial values of
     # weights, errors, and losses
     weights.append(W[:])
-    training_losses.append(get_loss(O_training, W, T_training))
+    training_losses.append(get_loss(O_training, T_training))
     training_errors.append(get_error_score(O_training, T_training))
-    validation_losses.append(get_loss(O_validation, W, T_validation))
+    validation_losses.append(get_loss(O_validation, T_validation))
     validation_errors.append(get_error_score(O_validation, T_validation))
 
     if verbose:
@@ -168,8 +176,8 @@ def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate, momentu
         # for each mini-batch (of "batch_size") computing
         # the gradient and updating the weights "W"
         for b in range(0, len(X_training) / batch_size):
-            X_batch = X_training[b * batch_size : (b+1) * batch_size]
-            T_batch = T_training[b * batch_size : (b+1) * batch_size]
+            X_batch = X_training[b * batch_size:(b+1) * batch_size]
+            T_batch = T_training[b * batch_size:(b+1) * batch_size]
             dW = backprop(X_batch, W, T_batch, functions, dropout_rate)
 
             for i in range(len(W)):
@@ -189,9 +197,9 @@ def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate, momentu
         # storing the weights, errors, and 
         # losses after the training epoch
         weights.append(W[:])
-        training_losses.append(get_loss(O_training, W, T_training))
+        training_losses.append(get_loss(O_training, T_training))
         training_errors.append(get_error_score(O_training, T_training))
-        validation_losses.append(get_loss(O_validation, W, T_validation))
+        validation_losses.append(get_loss(O_validation, T_validation))
         validation_errors.append(get_error_score(O_validation, T_validation))
 
         if verbose:
@@ -216,12 +224,13 @@ def train_nn(X, T, layers, functions, epochs, batch_size, learning_rate, momentu
     if verbose:
         print "-----------------------------------------------------------"
         print "Best Epoch: {0}".format(best_epoch)
-        print "Training Loss: {0:.3f}, Training Error: {1:.3f}".format(training_losses[best_epoch], training_errors[best_epoch])
-        print "Validation Loss: {0:.3f}, Validation Error: {1:.3f}".format(validation_losses[best_epoch], validation_errors[best_epoch])
+        print "Training Loss: {0:.3f}, Training Error: {1:.3f}".format(
+            training_losses[best_epoch], training_errors[best_epoch])
+        print "Validation Loss: {0:.3f}, Validation Error: {1:.3f}".format(
+            validation_losses[best_epoch], validation_errors[best_epoch])
         print
 
-    return (best_weights, best_epoch, training_losses, training_errors, validation_losses, validation_errors)
-
+    return best_weights, best_epoch, training_losses, training_errors, validation_losses, validation_errors
 
 
 if __name__ == "__main__":
@@ -243,7 +252,6 @@ if __name__ == "__main__":
     batch_sizes = [50, 100, 200]                        # different mini-batch sizes tried
     learning_rates = [0.01, 0.05, 0.1]                  # different learning rates tried
     dropout_rates = [0.0, 0.5]                          # different dropout rates tried (0 - no dropout)
-
 
     # processing command-line arguments
 
@@ -282,9 +290,7 @@ if __name__ == "__main__":
             print sys.argv[0], ": invalid option", option
             sys.exit(1)
 
-
     np.seterr(over="ignore", divide="ignore")
-
 
     print "Neural Networks"
     print
@@ -296,7 +302,6 @@ if __name__ == "__main__":
     print "{0} training data read".format(len(X_train))
     print "{0} testing data read".format(len(X_test))
     print
-
 
     input_dim = X_train.shape[1]
     output_dim = T_train.max() + 1
@@ -329,7 +334,7 @@ if __name__ == "__main__":
                             dataset_split, verbose=verbose
                         )
 
-                        # storing the weihgts and the corresponding validation
+                        # storing the weights and the corresponding validation
                         # error resulting from the above training, together with
                         # the values of the hyperparameters tried
                         weights.append(W_best)
@@ -354,9 +359,8 @@ if __name__ == "__main__":
     print "Best Params: {0}, validation error: {1:.3f}".format(P_selected, np.min(errors))
     print
 
-
     if evaluate:
-        # passing the testing set throught the trained network
+        # passing the testing set through the trained network
         O_test = forward_pass(X_test, W_selected, functions)[-1]
 
         # evaluating the model performance on the testing set
@@ -364,4 +368,3 @@ if __name__ == "__main__":
             get_error_score(O_test, T_test)
         )
         print
-

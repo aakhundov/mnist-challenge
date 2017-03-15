@@ -4,7 +4,7 @@ import numpy as np
 import scipy.spatial.distance as sp
 import scipy.stats as st
 
-from code import data
+import data
 
 
 # computing the matrix of pairwise distances between all vector elements
@@ -18,6 +18,7 @@ def get_distances(X, Y, metric):
     else:
         return sp.cdist(X, Y, metric)
 
+
 # classifying the set of inputs "X_inputs" based on their "k"-nearest neighbors
 # from "X_data" and their respective labels from "T_data". The value of "metric"
 # argument is used to specify the actual metric name in scipy terms
@@ -27,11 +28,12 @@ def classify(X_inputs, X_data, T_data, k, metric):
     nearest_labels = T_data[nearest_neighbors]
     return st.mode(nearest_labels, axis=1)[0]
 
+
 # comparing predicted vs. true labels and
 # returning the corresponding error score
-def get_error_score(T_predicted, T_true):
-    count = np.sum(T_predicted.ravel() != T_true.ravel())
-    return count * 100.0 / len(T_predicted)
+def get_error_score(predicted, true):
+    count = np.array(predicted.ravel() != true.ravel()).sum()
+    return count * 100.0 / len(predicted)
 
 
 # k-fold cross-validation of k-NN model based on "k" and "metric".
@@ -47,7 +49,7 @@ def cross_validate(X, T, folds, k, metric):
         f_end = f_start + fold_len
 
         # splitting the data into the validation set (the fold)
-        # and the correspondong training set (the rest of data)
+        # and the corresponding training set (the rest of data)
         X_training = np.concatenate((X[:f_start], X[f_end:]))
         T_training = np.concatenate((T[:f_start], T[f_end:]))
         X_validation = X[f_start:f_end]
@@ -60,7 +62,6 @@ def cross_validate(X, T, folds, k, metric):
     # outputting the array of the error 
     # scores for each of the folds
     return np.array(error_scores)
-
 
 
 if __name__ == "__main__":
@@ -78,7 +79,6 @@ if __name__ == "__main__":
 
     metrics = ["cityblock", "sqeuclidean", "cosine"]    # different metrics tried (in scipy terms)
     ks = [1, 3, 5, 7, 9, 17, 33]                        # different k-values tried
-
 
     # processing command-line arguments
 
@@ -105,7 +105,6 @@ if __name__ == "__main__":
             print sys.argv[0], ": invalid option", option
             sys.exit(1)
 
-
     print "K-Nearest Neighbors"
     print
 
@@ -116,7 +115,6 @@ if __name__ == "__main__":
     print "{0} training data read".format(len(X_train))
     print "{0} testing data read".format(len(X_test))
     print
-
 
     errors, params = [], []
 
@@ -143,12 +141,11 @@ if __name__ == "__main__":
     # which caused the lowest average error
     P_selected = params[np.argmin(errors)]
     T_predicted = classify(X_test, X_train, T_train, 
-        P_selected[1], P_selected[0])
+                           P_selected[1], P_selected[0])
 
     print "-----------------------------------------------------------------------------------------"
     print "Best Params: {0}, validation error: {1:.3f}".format(P_selected, np.min(errors))
     print
-
 
     if evaluate:
         # evaluating the model performance on the testing set
@@ -156,4 +153,3 @@ if __name__ == "__main__":
             get_error_score(T_predicted, T_test)
         )
         print
-
