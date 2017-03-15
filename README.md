@@ -1,7 +1,7 @@
 MNIST Challenge
 ===========================================================
 
-MNIST handwritten digits database recognition challenge was held as a part of "Machine Learning 1" course (WS16/17) at TU Munich. The rules of the challenge are given (as stated by instructors) in the "/report/rules.txt" file. This repository hosts my submission consisting of the following Python source code files (residing in the "code" folder):
+MNIST handwritten digits database recognition challenge was held as a part of "Machine Learning 1" course (WS16/17) at TU Munich. The rules of the challenge are given (as stated by instructors) in the "/report/rules.txt" file. This repository hosts my submission consisting of the "report.pdf" (in the "report" folder) in "report" folder and the following Python source code files (in the "code" folder):
 
 - **data.py** [reading and pre-processing MNIST]
 - **knn.py** [K-Nearest Neighbor implementation]
